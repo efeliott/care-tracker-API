@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.model/user.model';
 
@@ -10,7 +10,57 @@ export class UsersService {
     return this.userModel.findAll();
   }
 
-  async findOneById(id: number): Promise<User | null> {
-    return this.userModel.findOne({ where: { id } });
+  async findOneById(id: number): Promise<Partial<User> | null> {
+    const user = await this.userModel.findOne({
+      where: { id },
+      attributes: [
+        'id',
+        'nom',
+        'prenom',
+        'email',
+        'role',
+        'tel',
+        'naissance',
+        [this.userModel.sequelize?.literal("CONCAT_WS(' ', num_voie, type_voie, nom_voie, ville, code_postal)") || '', 'adresse_complete']
+      ]
+    });
+  
+    return user ? user.toJSON() : null;
+  }
+  
+
+  async updateProfile(userId: number, updateData: Partial<User>): Promise<Partial<User>> {
+    // Vérifier si l'utilisateur existe
+    const user = await this.userModel.findByPk(userId);
+    if (!user) {
+      throw new NotFoundException(`Utilisateur avec l'ID ${userId} non trouvé.`);
+    }
+
+    // Mise à jour des champs autorisés
+    const allowedFields: (keyof User)[] = ['nom', 'prenom', 'naissance', 'tel', 'num_voie', 'type_voie', 'nom_voie', 'ville', 'code_postal'];
+    const updatePayload: Partial<User> = {};
+
+    for (const field of allowedFields) {
+      if (updateData[field] !== undefined) {
+        updatePayload[field] = updateData[field] === '' ? null : updateData[field]; // Gère les champs pouvant être null
+      }
+    }
+
+    if (Object.keys(updatePayload).length === 0) {
+      throw new BadRequestException("Aucune donnée valide à mettre à jour.");
+    }
+
+    await this.userModel.update(updatePayload, { where: { id: userId } });
+
+    // Retourner l'utilisateur mis à jour
+    const updatedUser = await this.userModel.findByPk(userId, {
+      attributes: ['id', 'nom', 'prenom', 'email', 'naissance', 'tel', 'num_voie', 'type_voie', 'nom_voie', 'ville', 'code_postal']
+    });
+
+    if (!updatedUser) {
+      throw new NotFoundException(`Utilisateur avec l'ID ${userId} non trouvé après la mise à jour.`);
+    }
+
+    return updatedUser;
   }
 }

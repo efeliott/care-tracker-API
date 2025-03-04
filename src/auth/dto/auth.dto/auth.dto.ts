@@ -18,4 +18,25 @@ export class AuthDto {
 
   @IsOptional()
   etablissement_id?: number;
+
+  @IsOptional()
+  naissance?: Date;
+
+  @IsOptional()
+  tel?: string;
+
+  @IsOptional()
+  num_voie?: string;
+
+  @IsOptional()
+  type_voie?: string;
+
+  @IsOptional()
+  nom_voie?: string;
+
+  @IsOptional()
+  ville?: string;
+
+  @IsOptional()
+  code_postal?: string;
 }

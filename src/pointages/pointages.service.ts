@@ -65,7 +65,7 @@ export class PointagesService {
       throw new ForbiddenException("Seules les tâches en cours peuvent être clôturées.");
     }
   
-    // ✅ Correction : Recherche du pointage en cours
+    // Recherche du pointage en cours
     const pointage = await this.pointageModel.findOne({
         where: { tache_id: taskId, agent_id: user.id, fin_pointage: { [Op.is]: literal('NULL') } },
         order: [['createdAt', 'DESC']]
@@ -75,18 +75,18 @@ export class PointagesService {
       throw new NotFoundException("Aucun pointage en cours trouvé pour cette tâche.");
     }
   
-    // ✅ Solution : Utiliser update() à la place de save()
+    // Utiliser update() à la place de save()
     await this.pointageModel.update(
       { fin_pointage: new Date(), updatedAt: new Date() }, // Ajout explicite de updatedAt
       { where: { id: pointage.id } }
     );
   
-    // ✅ Recharge l'objet depuis la base après update
+    // Recharge l'objet depuis la base après update
     const updatedPointage = await this.pointageModel.findByPk(pointage.id);
   
     console.log('POINTAGE MIS À JOUR:', updatedPointage?.toJSON());
   
-    // ✅ Mise à jour du statut de la tâche
+    // Mise à jour du statut de la tâche
     task.statut = 'terminé';
     await task.save();
   
