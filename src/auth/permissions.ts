@@ -1,6 +1,7 @@
 export const ROLE_PERMISSIONS = {
   admin: [
-    'users:read', 'users:update', 'users:delete', 'users:profile',
+    'users:read', 'users:update', 'users:delete', 'users:profile', 'users:create',
+    'usagers:create', 'usagers:read', 'usagers:update', 'usagers:delete',
     'protected:access',
     'tasks:create', 'tasks:read', 'tasks:update', 'tasks:delete',
     'plannings:read',
@@ -8,6 +9,7 @@ export const ROLE_PERMISSIONS = {
   ],
   agent: [
     'users:read', 'users:update', 'users:profile',
+    'usagers:read',
     'protected:access',
     'tasks:create', 'tasks:read', 'tasks:update', 'tasks:delete',
     'pointages:create', 'pointages:update'
