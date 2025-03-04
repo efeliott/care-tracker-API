@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreationAttributes } from 'sequelize';
 import { Task } from './task.model/task.model';
@@ -72,6 +72,7 @@ export class TasksService {
     return task;
   }
 
+  // Récupérer toutes les tâches pour les 7 prochains jours en fonction du rôle de l'utilisateur
   async getTasksForNext7Days(user: User): Promise<Task[]> {
     const today = new Date();
     const sevenDaysLater = new Date();
@@ -96,6 +97,7 @@ export class TasksService {
     return tasks;
   }
   
+  // Récupérer toutes les tâches pour un utilisateur en fonction de son rôle
   async getAllTasksForUser(user: User): Promise<Task[]> {
     let whereCondition: any = {};
   
@@ -106,5 +108,43 @@ export class TasksService {
     }
   
     return this.taskModel.findAll({ where: whereCondition });
+  }
+
+  // Mettre à jour une tâche en fonction de son ID et du rôle de l'utilisateur
+  async updateTask(user: User, taskId: number, updateData: Partial<Task>): Promise<Task> {
+    const task = await this.taskModel.findByPk(taskId);
+  
+    if (!task) {
+      throw new NotFoundException("La tâche spécifiée n'existe pas.");
+    }
+  
+    // Vérification des permissions
+    if (user.role === 'agent' && task.agent_id !== user.id) {
+      throw new ForbiddenException("Un agent ne peut modifier que ses propres tâches.");
+    }
+    if (user.role === 'usager') {
+      throw new ForbiddenException("Un usager ne peut pas modifier de tâches.");
+    }
+  
+    // Mise à jour des champs autorisés uniquement
+    const allowedFields: (keyof Task)[] = ['date', 'heure_debut', 'heure_fin', 'type_intervention', 'statut', 'remarques'];
+    const updatePayload: Partial<Task> = {};
+  
+    for (const field of allowedFields) {
+      if (updateData[field] !== undefined) {
+        updatePayload[field] = updateData[field];
+      }
+    }
+  
+    if (Object.keys(updatePayload).length === 0) {
+      throw new BadRequestException("Aucune donnée valide à mettre à jour.");
+    }
+  
+    await this.taskModel.update(updatePayload, { where: { id: taskId } });
+  
+    // Recharger la tâche après mise à jour
+    const updatedTask = await this.taskModel.findByPk(taskId);
+  
+    return updatedTask!;
   }
 }
