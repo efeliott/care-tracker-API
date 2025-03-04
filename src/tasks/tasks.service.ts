@@ -55,4 +55,18 @@ export class TasksService {
     }
     return this.taskModel.findAll({ where: { usager_id: user.id } });
   }
+
+  async getTaskById(user: User, id: number): Promise<Task> {
+    const task = await this.taskModel.findByPk(id);
+    if (!task) {
+      throw new ForbiddenException("La tâche spécifiée n'existe pas.");
+    }
+    if (user.role === 'agent' && task.agent_id !== user.id) {
+      throw new ForbiddenException("Un agent ne peut consulter que ses propres tâches.");
+    }
+    if (user.role === 'usager' && task.usager_id !== user.id) {
+      throw new ForbiddenException("Un usager ne peut consulter que ses propres tâches.");
+    }
+    return task;
+  }
 }

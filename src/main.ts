@@ -9,6 +9,5 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   await app.listen(PORT);
-  console.log(`🚀 Serveur démarré sur le port ${PORT}`);
 }
 bootstrap();

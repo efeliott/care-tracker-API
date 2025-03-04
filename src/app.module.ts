@@ -10,6 +10,8 @@ import { Task } from './tasks/task.model/task.model';
 import { Planning } from './plannings/planning.model/planning.model';
 import { RoleGuard } from './auth/roles/roles.guard';
 import { JwtService } from '@nestjs/jwt';
+import { PointagesModule } from './pointages/pointages.module';
+import { Pointage } from './pointages/pointage.model/pointage.model';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -27,11 +29,12 @@ dotenv.config();
       autoLoadModels: true,
       synchronize: false,
     }),
-    SequelizeModule.forFeature([User, Task, Planning]),
+    SequelizeModule.forFeature([User, Task, Planning, Pointage]),
     UsersModule,
     TasksModule,
     PlanningsModule,
     ProtectedModule,
+    PointagesModule,
   ],
   providers: [RoleGuard, JwtService],
   exports: [RoleGuard, JwtService],

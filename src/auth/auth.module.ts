@@ -26,7 +26,6 @@ JwtModule.register({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         const secret = configService.get<string>('JWT_SECRET');
-        console.log('🚀 JWT_SECRET utilisé dans JwtModule:', secret || '⚠️ NON DÉFINI !');
         return {
           secret: secret || 'defaultSecret',
           signOptions: { expiresIn: '7d' },

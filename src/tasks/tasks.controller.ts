@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req, Param } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { RoleGuard } from '../auth/roles/roles.guard';
 import { Permissions } from '../auth/decorators/roles.decorator/roles.decorator';
@@ -20,5 +20,12 @@ export class TasksController {
   @Permissions('tasks:read')
   getAllTasks(@Req() req) {
     return this.tasksService.getAllTasks(req.user);
+  }
+
+  @Get(':id')
+  @UseGuards(RoleGuard)
+  @Permissions('tasks:read')
+  getTaskById(@Req() req, @Param('id') id: number) {
+    return this.tasksService.getTaskById(req.user, id);
   }
 }
