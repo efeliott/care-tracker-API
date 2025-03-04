@@ -5,5 +5,5 @@ export class LoginDto {
   email: string;
 
   @IsNotEmpty()
-  mot_de_passe: string;
+  password: string;
 }

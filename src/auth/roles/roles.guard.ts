@@ -30,7 +30,7 @@ export class RoleGuard implements CanActivate {
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      this.logger.error('❌ Accès refusé : Aucun token fourni.');
+      this.logger.error('Accès refusé : Aucun token fourni.');
       throw new UnauthorizedException('Accès refusé : aucun token fourni.');
     }
 
@@ -42,25 +42,25 @@ export class RoleGuard implements CanActivate {
     try {
       this.logger.log(`🔍 RoleGuard - SECRET utilisé : ${process.env.JWT_SECRET}`);
       user = this.jwtService.verify(token, { secret: process.env.JWT_SECRET });
-      this.logger.log(`✅ Utilisateur identifié : ${JSON.stringify(user)}`);
+      this.logger.log(`Utilisateur identifié : ${JSON.stringify(user)}`);
     } catch (error) {
-      this.logger.error(`❌ Erreur lors de la vérification du token : ${error.message}`);
+      this.logger.error(`Erreur lors de la vérification du token : ${error.message}`);
       throw new UnauthorizedException('Token invalide.');
     }
 
     // 🔍 Vérifier les permissions
     const userPermissions = ROLE_PERMISSIONS[user.role] || [];
-    this.logger.log(`🔍 Permissions actuelles de ${user.email} (${user.role}) : ${JSON.stringify(userPermissions)}`);
-    this.logger.log(`🎯 Permissions requises : ${JSON.stringify(requiredPermissions)}`);
+    this.logger.log(`Permissions actuelles de ${user.email} (${user.role}) : ${JSON.stringify(userPermissions)}`);
+    this.logger.log(`Permissions requises : ${JSON.stringify(requiredPermissions)}`);
 
     const hasPermission = requiredPermissions.some((permission) => userPermissions.includes(permission));
 
     if (!hasPermission) {
-      this.logger.warn(`⛔ Accès interdit pour ${user.email} (${user.role}). Permissions requises: ${requiredPermissions}. Permissions actuelles: ${userPermissions}`);
+      this.logger.warn(`Accès interdit pour ${user.email} (${user.role}). Permissions requises: ${requiredPermissions}. Permissions actuelles: ${userPermissions}`);
       throw new ForbiddenException('Accès interdit : permissions insuffisantes.');
     }
 
-    this.logger.log(`✅ Accès accordé à ${user.email} (${user.role}).`);
+    this.logger.log(`Accès accordé à ${user.email} (${user.role}).`);
     request.user = user;
     return true;
   }

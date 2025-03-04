@@ -2,7 +2,7 @@ import { Table, Column, Model, DataType, ForeignKey, BelongsTo, HasMany } from '
 import { User } from '../../users/user.model/user.model';
 import { Task } from '../../tasks/task.model/task.model';
 
-@Table({ tableName: 'Plannings' }) // ✅ Correspondance avec la table SQL
+@Table({ tableName: 'Plannings' })
 export class Planning extends Model<Planning> {
   @Column({ type: DataType.INTEGER, autoIncrement: true, primaryKey: true })
   declare id: number;
