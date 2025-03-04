@@ -12,6 +12,7 @@ import { RoleGuard } from './auth/roles/roles.guard';
 import { JwtService } from '@nestjs/jwt';
 import { PointagesModule } from './pointages/pointages.module';
 import { Pointage } from './pointages/pointage.model/pointage.model';
+import { UsagersModule } from './usagers/usagers.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -35,6 +36,7 @@ dotenv.config();
     PlanningsModule,
     ProtectedModule,
     PointagesModule,
+    UsagersModule,
   ],
   providers: [RoleGuard, JwtService],
   exports: [RoleGuard, JwtService],
