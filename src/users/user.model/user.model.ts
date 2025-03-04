@@ -1,7 +1,7 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
 import { CreationOptional } from 'sequelize'; // Ajout de `CreationOptional`
 
-@Table({ tableName: 'users' })
+@Table({ tableName: 'Users' })
 export class User extends Model<User> {
   @Column({ type: DataType.INTEGER, autoIncrement: true, primaryKey: true })
   declare id: CreationOptional<number>; // Ajout de `CreationOptional`
