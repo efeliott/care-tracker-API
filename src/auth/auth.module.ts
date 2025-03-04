@@ -17,7 +17,7 @@ JwtModule.register({
 @Module({
   
   imports: [
-    ConfigModule.forRoot(), // ✅ Assure que `.env` est bien chargé
+    ConfigModule.forRoot(),
     UsersModule,
     SequelizeModule.forFeature([User, Planning]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -28,7 +28,7 @@ JwtModule.register({
         const secret = configService.get<string>('JWT_SECRET');
         console.log('🚀 JWT_SECRET utilisé dans JwtModule:', secret || '⚠️ NON DÉFINI !');
         return {
-          secret: secret || 'defaultSecret', // ✅ Évite un `undefined` en production
+          secret: secret || 'defaultSecret',
           signOptions: { expiresIn: '7d' },
         };
       },

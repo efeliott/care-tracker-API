@@ -1,10 +1,10 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
-import { CreationOptional } from 'sequelize'; // Ajout de `CreationOptional`
+import { CreationOptional } from 'sequelize'; 
 
 @Table({ tableName: 'Users' })
 export class User extends Model<User> {
   @Column({ type: DataType.INTEGER, autoIncrement: true, primaryKey: true })
-  declare id: CreationOptional<number>; // Ajout de `CreationOptional`
+  declare id: CreationOptional<number>; 
 
   @Column({ type: DataType.STRING, allowNull: false })
   declare nom: string;
@@ -16,7 +16,7 @@ export class User extends Model<User> {
   declare email: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  declare mot_de_passe: string;
+  declare password: string;
 
   @Column({ type: DataType.ENUM('admin', 'agent', 'usager'), allowNull: false })
   declare role: string;

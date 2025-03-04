@@ -11,7 +11,7 @@ export class AuthDto {
   email: string;
 
   @MinLength(6)
-  mot_de_passe: string;
+  password: string;
 
   @IsEnum(['admin', 'agent', 'usager'])
   role: string;

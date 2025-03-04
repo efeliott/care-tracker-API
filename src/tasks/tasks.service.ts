@@ -12,7 +12,7 @@ export class TasksService {
   async createTask(user: User, createTaskDto: CreateTaskDto): Promise<Task> {
     const { planning_id, agent_id, usager_id, type_intervention, remarques, date, heure_debut, heure_fin, statut } = createTaskDto;
   
-    // ✅ Vérifier que l'agent cible existe bien et qu'il est "agent"
+    // Vérifier que l'agent cible existe bien et qu'il est "agent"
     if (agent_id) {
       const agent = await User.findOne({ where: { id: agent_id, role: 'agent' } });
       if (!agent) {
@@ -20,7 +20,7 @@ export class TasksService {
       }
     }
   
-    // ✅ Vérifier les permissions de création de tâche
+    // Vérifier les permissions de création de tâche
     if (user.role === 'agent') {
       if (agent_id !== user.id) {
         throw new ForbiddenException("Un agent ne peut créer que ses propres tâches.");
@@ -31,11 +31,11 @@ export class TasksService {
       throw new ForbiddenException("Un usager ne peut pas créer de tâches.");
     }
   
-    // ✅ Création de la tâche avec vérification des champs
+    // Création de la tâche avec vérification des champs
     return await this.taskModel.create({
       planning_id,
-      agent_id: agent_id ?? null, // Un admin peut assigner un agent
-      usager_id: usager_id ?? null, // Optionnel selon le contexte
+      agent_id: agent_id ?? null, 
+      usager_id: usager_id ?? null, 
       type_intervention,
       remarques: remarques ?? null,
       date: new Date(date),
