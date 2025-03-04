@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
-import { QueryTypes } from 'sequelize';
 import User from '../users/user.model/user.model';
 import { Planning } from '../plannings/planning.model/planning.model';
 import { AuthDto } from './dto/auth.dto/auth.dto';
@@ -20,7 +19,7 @@ export class AuthService {
   ) {}
 
   async register(authDto: AuthDto): Promise<{ token: string }> {
-    const { nom, prenom, email, password, role, etablissement_id } = authDto;
+    const { nom, prenom, email, password, role, etablissement_id, tel } = authDto;
   
     const existingUser = await this.userModel.findOne({ where: { email } });
     if (existingUser) throw new ConflictException('Cet email est déjà utilisé.');
@@ -37,7 +36,8 @@ export class AuthService {
           email, 
           password: hashedPassword, 
           role, 
-          etablissement_id: etablissement_id ?? null 
+          etablissement_id: etablissement_id ?? null,
+          tel: tel ?? null
         } as CreationAttributes<User>,
         { transaction }
       );
@@ -84,7 +84,6 @@ export class AuthService {
     }
   
     const token = this.generateJwtToken(user);
-    console.log("Token généré :", token);
     return { token };
   }
   
