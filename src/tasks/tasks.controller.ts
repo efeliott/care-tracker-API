@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, UseGuards, Req, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, UseGuards, Req, Param } from '@nestjs/common';
+import { Task } from './task.model/task.model';
 import { TasksService } from './tasks.service';
 import { RoleGuard } from '../auth/roles/roles.guard';
 import { Permissions } from '../auth/decorators/roles.decorator/roles.decorator';
@@ -42,4 +43,11 @@ export class TasksController {
   getTaskById(@Req() req, @Param('id') id: number) {
     return this.tasksService.getTaskById(req.user, id);
   }
+
+  @Put(':id')
+  @UseGuards(RoleGuard)
+  @Permissions('tasks:update')
+  updateTask(@Req() req, @Param('id') taskId: number, @Body() updateData: Partial<Task>) {
+    return this.tasksService.updateTask(req.user, taskId, updateData);
+}
 }
