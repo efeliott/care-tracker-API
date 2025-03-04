@@ -1,9 +1,10 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreationAttributes } from 'sequelize';
 import { Task } from './task.model/task.model';
 import { User } from '../users/user.model/user.model';
 import { CreateTaskDto } from './dto/create-task.dto/create-task.dto';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class TasksService {
@@ -45,7 +46,7 @@ export class TasksService {
     } as CreationAttributes<Task>);
   }
   
-
+  // Récupérer toutes les tâches en fonction du rôle de l'utilisateur
   async getAllTasks(user: User): Promise<Task[]> {
     if (user.role === 'admin') {
       return this.taskModel.findAll();
@@ -56,6 +57,7 @@ export class TasksService {
     return this.taskModel.findAll({ where: { usager_id: user.id } });
   }
 
+  // Récupérer une tâche en fonction de son ID et du rôle de l'utilisateur
   async getTaskById(user: User, id: number): Promise<Task> {
     const task = await this.taskModel.findByPk(id);
     if (!task) {
@@ -68,5 +70,41 @@ export class TasksService {
       throw new ForbiddenException("Un usager ne peut consulter que ses propres tâches.");
     }
     return task;
+  }
+
+  async getTasksForNext7Days(user: User): Promise<Task[]> {
+    const today = new Date();
+    const sevenDaysLater = new Date();
+    sevenDaysLater.setDate(today.getDate() + 7);
+  
+    let whereCondition: any = {
+      date: { [Op.between]: [today, sevenDaysLater] }
+    };
+  
+    if (user.role === 'agent') {
+      whereCondition.agent_id = user.id;
+    } else if (user.role === 'usager') {
+      whereCondition.usager_id = user.id;
+    }
+  
+    const tasks = await this.taskModel.findAll({ where: whereCondition });
+  
+    if (tasks.length === 0) {
+      return [];
+    }
+  
+    return tasks;
+  }
+  
+  async getAllTasksForUser(user: User): Promise<Task[]> {
+    let whereCondition: any = {};
+  
+    if (user.role === 'agent') {
+      whereCondition.agent_id = user.id;
+    } else if (user.role === 'usager') {
+      whereCondition.usager_id = user.id;
+    }
+  
+    return this.taskModel.findAll({ where: whereCondition });
   }
 }
