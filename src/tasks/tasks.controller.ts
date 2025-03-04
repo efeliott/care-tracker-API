@@ -15,6 +15,20 @@ export class TasksController {
     return this.tasksService.createTask(req.user, createTaskDto);
   }
 
+  @Get('next7days')
+  @UseGuards(RoleGuard)
+  @Permissions('tasks:read')
+  getTasksForNext7Days(@Req() req) {
+    return this.tasksService.getTasksForNext7Days(req.user);
+  }
+
+  @Get('all')
+  @UseGuards(RoleGuard)
+  @Permissions('tasks:read')
+  getAllTasksForUser(@Req() req) {
+    return this.tasksService.getAllTasksForUser(req.user);
+  }
+
   @Get()
   @UseGuards(RoleGuard)
   @Permissions('tasks:read')
