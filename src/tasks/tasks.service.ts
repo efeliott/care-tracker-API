@@ -147,4 +147,28 @@ export class TasksService {
   
     return updatedTask!;
   }
+
+  // Récupérer toutes les tâches pour aujourd'hui en fonction du rôle de l'utilisateur
+  async getTasksForToday(user: User): Promise<Task[]> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+  
+    let whereCondition: any = {
+      date: { [Op.between]: [today, endOfToday] }
+    };
+  
+    if (user.role === 'agent') {
+      whereCondition.agent_id = user.id;
+    } else if (user.role === 'usager') {
+      whereCondition.usager_id = user.id;
+    }
+  
+    const tasks = await this.taskModel.findAll({ where: whereCondition });
+  
+    return tasks;
+  }
+  
 }
