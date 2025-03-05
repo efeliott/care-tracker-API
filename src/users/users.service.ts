@@ -10,25 +10,30 @@ export class UsersService {
     return this.userModel.findAll();
   }
 
+  // Méthode pour trouver un utilisateur par son ID
   async findOneById(id: number): Promise<Partial<User> | null> {
     const user = await this.userModel.findOne({
-      where: { id },
-      attributes: [
-        'id',
-        'nom',
-        'prenom',
-        'email',
-        'role',
-        'tel',
-        'naissance',
-        [this.userModel.sequelize?.literal("CONCAT_WS(' ', num_voie, type_voie, nom_voie, ville, code_postal)") || '', 'adresse_complete']
-      ]
+        where: { id },
+        attributes: [
+            'id',
+            'nom',
+            'prenom',
+            'email',
+            'role',
+            'tel',
+            'naissance',
+            'num_voie',
+            'type_voie',
+            'nom_voie',
+            'ville',
+            'code_postal'
+        ]
     });
-  
+
     return user ? user.toJSON() : null;
   }
   
-
+  // Méthode pour mettre à jour le profil d'un utilisateur
   async updateProfile(userId: number, updateData: Partial<User>): Promise<Partial<User>> {
     // Vérifier si l'utilisateur existe
     const user = await this.userModel.findByPk(userId);
@@ -42,7 +47,7 @@ export class UsersService {
 
     for (const field of allowedFields) {
       if (updateData[field] !== undefined) {
-        updatePayload[field] = updateData[field] === '' ? null : updateData[field]; // Gère les champs pouvant être null
+        updatePayload[field] = updateData[field] === '' ? null : updateData[field];
       }
     }
 
