@@ -13,7 +13,7 @@ export class UsagersController {
   @Permissions('usagers:create')
   async createUsager(@Req() req, @Body() usagerData: Partial<Usager & { nom: string; prenom: string; email: string; date_naissance: Date; tel: string }>) {
     console.log("Utilisateur qui crée l'usager:", req.user);
-    
+  
     const adminId = req.user.id;
     const adminEtablissementId = req.user.etablissement_id;
   
