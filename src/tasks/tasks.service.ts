@@ -76,6 +76,7 @@ export class TasksService {
   async getTasksForNext7Days(user: User): Promise<Task[]> {
     const today = new Date();
     const sevenDaysLater = new Date();
+    today.setHours(0, 0, 0, 0);
     sevenDaysLater.setDate(today.getDate() + 7);
   
     let whereCondition: any = {
@@ -170,5 +171,4 @@ export class TasksService {
   
     return tasks;
   }
-  
 }
