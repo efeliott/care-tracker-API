@@ -16,28 +16,35 @@ export class TasksController {
     return this.tasksService.createTask(req.user, createTaskDto);
   }
 
-  @Get('next7days')
+  @Get('today') 
+  @UseGuards(RoleGuard)
+  @Permissions('tasks:read')
+  getTasksForToday(@Req() req) {
+    return this.tasksService.getTasksForToday(req.user);
+  }
+
+  @Get('next7days') 
   @UseGuards(RoleGuard)
   @Permissions('tasks:read')
   getTasksForNext7Days(@Req() req) {
     return this.tasksService.getTasksForNext7Days(req.user);
   }
 
-  @Get('all')
+  @Get('all') 
   @UseGuards(RoleGuard)
   @Permissions('tasks:read')
   getAllTasksForUser(@Req() req) {
     return this.tasksService.getAllTasksForUser(req.user);
   }
 
-  @Get()
+  @Get() 
   @UseGuards(RoleGuard)
   @Permissions('tasks:read')
   getAllTasks(@Req() req) {
     return this.tasksService.getAllTasks(req.user);
   }
 
-  @Get(':id')
+  @Get(':id') 
   @UseGuards(RoleGuard)
   @Permissions('tasks:read')
   getTaskById(@Req() req, @Param('id') id: number) {
@@ -49,5 +56,5 @@ export class TasksController {
   @Permissions('tasks:update')
   updateTask(@Req() req, @Param('id') taskId: number, @Body() updateData: Partial<Task>) {
     return this.tasksService.updateTask(req.user, taskId, updateData);
-}
+  }
 }
